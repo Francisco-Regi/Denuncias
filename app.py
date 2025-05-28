@@ -89,6 +89,10 @@ def api_login():
 def denuncia_anonima():
     data = request.form
     archivos = request.files.getlist("evidencias")
+
+    # ✅ Crear carpeta de destino si no existe
+    os.makedirs("static/uploads", exist_ok=True)
+
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     cur.execute("SELECT MAX(id_denuncia) FROM denuncias")
@@ -117,6 +121,7 @@ def denuncia_anonima():
     conn.close()
     return redirect("/")
 
+
 # Denuncia digital
 @app.route("/api/digital", methods=["POST"])
 def denuncia_digital():
@@ -124,6 +129,9 @@ def denuncia_digital():
     archivos = request.files.getlist("evidencias")
     nombre = data.get("nombre")
     telefono = data.get("telefono")
+
+    # ✅ Crear carpeta de destino si no existe
+    os.makedirs("static/uploads", exist_ok=True)
 
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -158,6 +166,7 @@ def denuncia_digital():
     conn.commit()
     conn.close()
     return redirect("/")
+
 
 # Consulta de denuncias
 @app.route("/api/consulta/<folio>")
