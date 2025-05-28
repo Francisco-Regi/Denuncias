@@ -183,7 +183,8 @@ def denuncia_digital():
                         (id_denuncia, nombre, "imagen"))
     conn.commit()
     conn.close()
-    return redirect("/")
+    return jsonify({"status": "ok"})
+
 
 
 # Consulta de denuncias

@@ -152,25 +152,73 @@
   window.location.href = "/logout";
 }
 
-document.querySelector("form").addEventListener("submit", function (e) {
-  e.preventDefault();
+    document.addEventListener("DOMContentLoaded", function () {
+    generarFolio();
+    const now = new Date();
+    document.getElementById("fecha_hora").value = now.toISOString().slice(0, 16);
 
-  const form = this;
-  const formData = new FormData(form);
-  fetch("/api/digital", {
-    method: "POST",
-    body: formData
-  }).then(resp => {
-    if (resp.redirected) {
-      // Mostrar botón de cerrar sesión
-      document.getElementById("btnCerrarSesion").style.display = "block";
+    const nombre = "{{ session.get('nombre', '') }}";
+    const telefono = "{{ session.get('telefono', '') }}";
 
-      // Deshabilitar todo el formulario
-      const inputs = form.querySelectorAll("input, select, textarea, button:not(#btnCerrarSesion)");
-      inputs.forEach(el => el.disabled = true);
+    if (nombre) {
+      document.getElementById("nombre").value = nombre;
+      document.getElementById("nombre").readOnly = true;
     }
+
+    if (telefono) {
+      document.getElementById("telefono").value = telefono;
+      document.getElementById("telefono").readOnly = true;
+    }
+
+    const btnCerrar = document.getElementById("btnCerrarSesion");
+    btnCerrar.style.display = "none";
+
+    // Escucha del formulario
+    const form = document.querySelector("form");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      fetch("/api/digital", {
+        method: "POST",
+        body: formData
+      })
+        .then(resp => resp.json())
+        .then(data => {
+          if (data.status === "ok") {
+            alert("✅ ENVIADO CORRECTAMENTE");
+
+            // Limpia todos los campos excepto los de sesión
+            form.reset();
+
+            if (nombre) {
+              document.getElementById("nombre").value = nombre;
+            }
+            if (telefono) {
+              document.getElementById("telefono").value = telefono;
+            }
+
+            generarFolio(); // genera uno nuevo
+            const now = new Date();
+            document.getElementById("fecha_hora").value = now.toISOString().slice(0, 16);
+
+            // Mostrar botón de cerrar sesión
+            btnCerrar.style.display = "block";
+
+            // Deshabilitar todos los demás campos
+            form.querySelectorAll("input, select, textarea, button:not(#btnCerrarSesion)").forEach(el => {
+              el.disabled = true;
+            });
+          } else {
+            alert("❌ Error al enviar la denuncia");
+          }
+        });
+    });
   });
-});
+
+  function cerrarSesion() {
+    window.location.href = "/logout";
+  }
 
 
     window.onload = () => {
