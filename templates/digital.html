@@ -147,6 +147,56 @@
       const now = new Date();
       document.getElementById("fecha_hora").value = now.toISOString().slice(0, 16);
     };
+
+    function cerrarSesion() {
+  window.location.href = "/logout";
+}
+
+document.querySelector("form").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const form = this;
+  const formData = new FormData(form);
+  fetch("/api/digital", {
+    method: "POST",
+    body: formData
+  }).then(resp => {
+    if (resp.redirected) {
+      // Mostrar botón de cerrar sesión
+      document.getElementById("btnCerrarSesion").style.display = "block";
+
+      // Deshabilitar todo el formulario
+      const inputs = form.querySelectorAll("input, select, textarea, button:not(#btnCerrarSesion)");
+      inputs.forEach(el => el.disabled = true);
+    }
+  });
+});
+
+
+    window.onload = () => {
+  generarFolio();
+  const now = new Date();
+  document.getElementById("fecha_hora").value = now.toISOString().slice(0, 16);
+
+  // Auto rellenar nombre y teléfono desde sesión (inyectados por Jinja2)
+  const nombre = "{{ session.get('nombre', '') }}";
+  const telefono = "{{ session.get('telefono', '') }}";
+
+  if (nombre) {
+    document.getElementById("nombre").value = nombre;
+    document.getElementById("nombre").readOnly = true;
+  }
+
+  if (telefono) {
+    document.getElementById("telefono").value = telefono;
+    document.getElementById("telefono").readOnly = true;
+  }
+
+  // Ocultar botón de cerrar sesión por defecto
+  const btnCerrar = document.getElementById("btnCerrarSesion");
+  btnCerrar.style.display = "none";
+ };
+
   </script>
 </head>
 <body>
@@ -214,6 +264,10 @@
       <input type="file" name="evidencias" id="evidencias" multiple accept=".jpg,.jpeg,.png,.mp4,.pdf">
 
       <button type="submit">📤 Enviar Denuncia</button>
+      <button type="button" id="btnCerrarSesion" onclick="cerrarSesion()"
+       style="background-color: red; color: white; padding: 10px; border: none; border-radius: 5px;">
+       🔒 Cerrar Sesión
+      </button>
     </form>
 
     <div class="alerta">

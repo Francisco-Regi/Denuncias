@@ -1,11 +1,12 @@
 
-from flask import Flask, request, jsonify, render_template, redirect
+from flask import Flask, request, jsonify, render_template, redirect, session
 import sqlite3
 import os
 from datetime import datetime
 
 app = Flask(__name__)
 DB_PATH = os.path.join(os.path.dirname(__file__), "denuncias.db")
+app.secret_key = "clave-secreta-segura"  # Necesario para usar sesiones
 
 # Páginas principales
 @app.route("/")
@@ -45,6 +46,7 @@ def ultimo_folio():
 # Registro de usuario
 @app.route("/api/registro", methods=["POST"])
 def api_registro():
+    
     data = request.form
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
@@ -76,13 +78,23 @@ def api_login():
     contrasena = request.form.get("contrasena")
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
-    cur.execute("SELECT * FROM usuarios WHERE correo=? AND contrasena=?", (correo, contrasena))
+    cur.execute("SELECT nombre, telefono FROM usuarios WHERE correo=? AND contrasena=?", (correo, contrasena))
     user = cur.fetchone()
     conn.close()
+
     if user:
+        session["nombre"] = user[0]
+        session["telefono"] = user[1]
         return redirect("/digital")
     else:
         return "Correo o contraseña incorrectos"
+
+#cerrar sesion
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
 
 # Denuncia anónima
 @app.route("/api/anonima", methods=["POST"])
