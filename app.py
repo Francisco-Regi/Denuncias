@@ -90,11 +90,9 @@ def denuncia_anonima():
     data = request.form
     archivos = request.files.getlist("evidencias")
 
-    # ✅ Crear carpeta de destino si no existe
-    os.makedirs("static/uploads", exist_ok=True)
-
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
+
     cur.execute("SELECT MAX(id_denuncia) FROM denuncias")
     ultimo_id = cur.fetchone()[0] or 0
     folio = f"DV{datetime.now().strftime('%Y%m%d')}{ultimo_id + 1:04d}"
@@ -111,15 +109,20 @@ def denuncia_anonima():
     ))
     id_denuncia = cur.lastrowid
 
+    # Asegurarse de que la carpeta exista
+    os.makedirs("static/uploads", exist_ok=True)
+
     for archivo in archivos:
         if archivo:
             nombre = archivo.filename
             archivo.save(os.path.join("static/uploads", nombre))
             cur.execute("INSERT INTO evidencias (id_denuncia, archivo, tipo) VALUES (?, ?, ?)",
                         (id_denuncia, nombre, "imagen"))
+
     conn.commit()
     conn.close()
     return redirect("/")
+
 
 
 # Denuncia digital
@@ -156,6 +159,9 @@ def denuncia_digital():
         data.get("descripcion"), folio
     ))
     id_denuncia = cur.lastrowid
+
+    # Asegurarse de que la carpeta exista
+    os.makedirs("static/uploads", exist_ok=True)
 
     for archivo in archivos:
         if archivo:
