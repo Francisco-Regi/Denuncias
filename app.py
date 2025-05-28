@@ -7,12 +7,11 @@ from datetime import datetime
 app = Flask(__name__)
 DB_PATH = os.path.join(os.path.dirname(__file__), "denuncias.db")
 
-# Página de inicio
+# Páginas principales
 @app.route("/")
 def index():
     return render_template("index.html")
 
-# Formularios
 @app.route("/anonimo")
 def formulario_anonimo():
     return render_template("anonimo.html")
@@ -33,7 +32,7 @@ def registro():
 def login():
     return render_template("iniciosesion.html")
 
-# Endpoint para generar folio automático
+# Generar folio automáticamente
 @app.route("/api/ultimo_folio")
 def ultimo_folio():
     conn = sqlite3.connect(DB_PATH)
@@ -43,7 +42,7 @@ def ultimo_folio():
     nuevo_folio = f"DV{datetime.now().strftime('%Y%m%d')}{ultimo_id + 1:04d}"
     return jsonify({"folio": nuevo_folio})
 
-# Registrar usuario
+# Registro de usuario
 @app.route("/api/registro", methods=["POST"])
 def api_registro():
     data = request.form
@@ -70,7 +69,7 @@ def api_registro():
     finally:
         conn.close()
 
-# Validar login
+# Validación de login
 @app.route("/api/login", methods=["POST"])
 def api_login():
     correo = request.form.get("correo")
@@ -85,7 +84,7 @@ def api_login():
     else:
         return "Correo o contraseña incorrectos"
 
-# Registrar denuncia anónima
+# Denuncia anónima
 @app.route("/api/anonima", methods=["POST"])
 def denuncia_anonima():
     data = request.form
@@ -118,7 +117,7 @@ def denuncia_anonima():
     conn.close()
     return redirect("/")
 
-# Registrar denuncia digital
+# Denuncia digital
 @app.route("/api/digital", methods=["POST"])
 def denuncia_digital():
     data = request.form
@@ -160,7 +159,7 @@ def denuncia_digital():
     conn.close()
     return redirect("/")
 
-# Consulta por folio
+# Consulta de denuncias
 @app.route("/api/consulta/<folio>")
 def consulta_folio(folio):
     conn = sqlite3.connect(DB_PATH)
