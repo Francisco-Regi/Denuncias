@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Consulta de Denuncias</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 15px 25px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    header nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      flex: 1;
+      min-width: 300px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: white;
+      background-color: #007bff;
+      padding: 10px;
+      border-radius: 10px 10px 0 0;
+      margin: -20px -20px 20px -20px;
+    }
+
+    .estado-box {
+      margin-top: 20px;
+      font-size: 16px;
+      padding: 10px;
+      border-left: 6px solid #007bff;
+      background-color: #eef4fc;
+      border-radius: 5px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .subcard {
+      margin-top: 15px;
+      background-color: #f9f9f9;
+      border-left: 6px solid #17a2b8;
+      padding: 10px;
+      border-radius: 5px;
+    }
+
+    .faq-item {
+      margin-bottom: 10px;
+    }
+
+    .faq-item summary {
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      font-size: 14px;
+      border-radius: 20px;
+      color: white;
+      font-weight: bold;
+    }
+
+    .Recibida { background-color: gray; }
+    .Rechazada { background-color: red; }
+    .Procesada { background-color: green; }
+    .En_revision { background-color: orange; }
+    .Validada { background-color: blue; }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div><strong>🚦 Denuncias Viales</strong></div>
+  <nav>
+    <a href="index.html">Inicio</a>
+    <a href="anonimo.html">Denunciar</a>
+    <a href="consulta.html">Consultar</a>
+  </nav>
+</header>
+
+<div class="container">
+
+  <!-- Panel de Consulta -->
+  <div class="card" style="flex: 2;">
+    <h2>🔎 Consulta de Denuncias</h2>
+    <p>Ingrese el folio de su denuncia para verificar su estado actual. Ejemplo: <code>DV20250501XXXX</code></p>
+
+    <input type="text" id="folio" placeholder="Ej. DV20250501XXXX">
+    <button onclick="consultarDenuncia()">Consultar</button>
+
+    <!-- Resultado -->
+    <div id="resultado" style="margin-top: 25px; display: none;">
+      <div class="estado-box">
+        <strong>Estado:</strong> <span id="estado" class="badge"></span>
+      </div>
+
+      <div class="subcard">
+        <strong>Descripción del seguimiento:</strong>
+        <p id="descripcion"></p>
+      </div>
+
+      <div class="subcard">
+        <strong>Atendido por:</strong>
+        <p id="personal"></p>
+        <strong>Cargo:</strong>
+        <p id="cargo"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div class="card" style="flex: 1;">
+    <h2>❓ Preguntas Frecuentes</h2>
+    <div class="faq-item">
+      <details>
+        <summary>¿Cómo obtengo mi folio?</summary>
+        <p>Se genera automáticamente al enviar la denuncia.</p>
+      </details>
+    </div>
+    <div class="faq-item">
+      <details>
+        <summary>¿Qué debo hacer si perdí mi folio?</summary>
+        <p>Contacta al soporte con tus datos si fue una denuncia digital.</p>
+      </details>
+    </div>
+    <div class="faq-item">
+      <details>
+        <summary>¿Cuánto tiempo tarda el proceso?</summary>
+        <p>Depende de la categoría, normalmente entre 24 a 72 horas.</p>
+      </details>
+    </div>
+    <div class="faq-item">
+      <details>
+        <summary>¿Puedo añadir información adicional?</summary>
+        <p>Solo si fue digital y estás registrado. En anónimas no es posible.</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- Contacto -->
+  <div class="card" style="flex: 1;">
+    <h2>📞 Contacto</h2>
+    <p>Si tiene problemas para consultar su denuncia o requiere asistencia adicional, puede contactarnos:</p>
+    <ul>
+      <li>📧 soporte@denunciavial.mx</li>
+      <li>📞 +52 (55) 1234-5678</li>
+      <li>🕐 Lunes a Viernes, 9:00 – 18:00</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  async function consultarDenuncia() {
+    const folio = document.getElementById("folio").value.trim();
+    if (!folio) return alert("Por favor, ingrese un folio.");
+
+    try {
+      const res = await fetch(`/api/consulta/${folio}`);
+      const data = await res.json();
+
+      if (!data || data.error) {
+        alert("No se encontró la denuncia.");
+        return;
+      }
+
+      document.getElementById("estado").textContent = data.estado;
+      document.getElementById("estado").className = "badge " + data.estado.replace(" ", "_");
+
+      document.getElementById("descripcion").textContent = data.descripcion || "No se ha registrado seguimiento aún.";
+      document.getElementById("personal").textContent = data.atendido_por || "No asignado.";
+      document.getElementById("cargo").textContent = data.cargo || "Sin información.";
+
+      document.getElementById("resultado").style.display = "block";
+
+    } catch (e) {
+      alert("Error al consultar. Intenta de nuevo.");
+    }
+  }
+</script>
+
+</body>
+</html>

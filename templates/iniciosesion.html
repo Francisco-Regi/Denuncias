@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Iniciar Sesión</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+    }
+
+    header nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 50px auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    h2 {
+      margin-top: 0;
+      background-color: #007bff;
+      color: white;
+      padding: 12px;
+      border-radius: 10px 10px 0 0;
+      text-align: left;
+      font-size: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-group input {
+      padding-left: 35px;
+    }
+
+    .form-group .icon {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 16px;
+      color: gray;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .checkbox input {
+      margin-right: 10px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .extra {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .extra a {
+      text-decoration: none;
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div><strong>🚦 Denuncias Viales</strong></div>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="anonimo.html">Denunciar</a>
+      <a href="login.html">Consultar</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>🔐 Iniciar Sesión</h2>
+    <form action="/api/login" method="post">
+
+      <div class="form-group">
+        <span class="icon">📧</span>
+        <input type="email" name="correo" placeholder="correo@ejemplo.com" required>
+      </div>
+
+      <div class="form-group">
+        <span class="icon">🔒</span>
+        <input type="password" name="contrasena" placeholder="Contraseña" required>
+      </div>
+
+      <div class="checkbox">
+        <input type="checkbox" id="recordar">
+        <label for="recordar">Recordar sesión</label>
+      </div>
+
+      <button type="submit">➡️ Iniciar Sesión</button>
+
+      <div class="extra">
+        ¿No tiene cuenta? <a href="registrarse.html">Registrarse</a><br>
+        <a href="#">¿Olvidó su contraseña?</a>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>
