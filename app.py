@@ -13,11 +13,11 @@ def index():
     return render_template("index.html")
 
 # Formularios
-@app.route("/formulario_anonimo")
+@app.route("/anonimo")
 def formulario_anonimo():
-    return render_template("formulario_anonimo.html")
+    return render_template("anonimo.html")
 
-@app.route("/formulario_digital")
+@app.route("/digital")
 def formulario_digital():
     return render_template("digital.html")
 
@@ -81,12 +81,12 @@ def api_login():
     user = cur.fetchone()
     conn.close()
     if user:
-        return redirect("/formulario_digital")
+        return redirect("/digital")
     else:
         return "Correo o contraseña incorrectos"
 
 # Registrar denuncia anónima
-@app.route("/api/denuncia_anonima", methods=["POST"])
+@app.route("/api/anonima", methods=["POST"])
 def denuncia_anonima():
     data = request.form
     archivos = request.files.getlist("evidencias")
@@ -119,7 +119,7 @@ def denuncia_anonima():
     return redirect("/")
 
 # Registrar denuncia digital
-@app.route("/api/denuncia_digital", methods=["POST"])
+@app.route("/api/digital", methods=["POST"])
 def denuncia_digital():
     data = request.form
     archivos = request.files.getlist("evidencias")
