@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulario de Denuncia Digital</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+    }
+
+    header nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    h2 {
+      margin-top: 0;
+      background-color: #007bff;
+      color: white;
+      padding: 12px;
+      border-radius: 10px 10px 0 0;
+      font-size: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="datetime-local"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .fila {
+      display: flex;
+      gap: 15px;
+    }
+
+    .fila > div {
+      flex: 1;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    .ubicacion-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background-color: #0d6efd;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .alerta {
+      background-color: #fff3cd;
+      padding: 15px;
+      margin-top: 25px;
+      border-left: 6px solid #ffc107;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+  </style>
+
+  <script>
+    function validarCategoria() {
+      const categoria = document.getElementById("categoria").value;
+      const placa = document.getElementById("placa_vehiculo");
+      placa.disabled = categoria !== "Seguridad vial";
+      if (placa.disabled) placa.value = "";
+    }
+
+    async function generarFolio() {
+      try {
+        const res = await fetch("/api/ultimo_folio");
+        const data = await res.json();
+        document.getElementById("folio").value = data.folio;
+      } catch (e) {
+        document.getElementById("folio").value = "ERROR";
+      }
+    }
+
+    async function obtenerUbicacion() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+          const lat = pos.coords.latitude.toFixed(6);
+          const lon = pos.coords.longitude.toFixed(6);
+          document.getElementById("latitud").value = lat;
+          document.getElementById("longitud").value = lon;
+
+          // Dirección usando Nominatim
+          const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+          const data = await response.json();
+          document.getElementById("direccion").value = data.display_name || "Dirección no disponible";
+        }, () => {
+          alert("No se pudo obtener tu ubicación.");
+        });
+      } else {
+        alert("Tu navegador no soporta geolocalización.");
+      }
+    }
+
+    window.onload = () => {
+      generarFolio();
+      const now = new Date();
+      document.getElementById("fecha_hora").value = now.toISOString().slice(0, 16);
+    };
+  </script>
+</head>
+<body>
+
+  <header>
+    <div><strong>🚦 Denuncias Viales</strong></div>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="formulario_anonimo.html">Denunciar</a>
+      <a href="login.html">Consultar</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>📝 Denuncia Digital</h2>
+    <form action="/api/denuncia_digital" method="post" enctype="multipart/form-data">
+
+      <label for="folio">Folio asignado automáticamente</label>
+      <input type="text" name="folio" id="folio" readonly>
+
+      <label for="nombre">* Nombre del Denunciante</label>
+      <input type="text" name="nombre" id="nombre" required>
+
+      <label for="telefono">* Teléfono</label>
+      <input type="text" name="telefono" id="telefono" pattern="[0-9]{10}" placeholder="10 dígitos" required>
+
+      <label for="categoria">* Categoría del Incidente</label>
+      <select name="categoria" id="categoria" onchange="validarCategoria()" required>
+        <option value="">Seleccione una categoría</option>
+        <option>Seguridad vial</option>
+        <option>Seguridad civil</option>
+        <option>Seguridad infantil</option>
+        <option>Seguridad médica</option>
+        <option>Seguridad policiaca</option>
+        <option>Ciberseguridad</option>
+      </select>
+
+      <label>* Ubicación del Incidente</label>
+      <button type="button" class="ubicacion-btn" onclick="obtenerUbicacion()">📍 Obtener mi Ubicación Actual</button>
+
+      <div class="fila">
+        <div>
+          <label for="latitud">Latitud</label>
+          <input type="text" id="latitud" name="latitud">
+        </div>
+        <div>
+          <label for="longitud">Longitud</label>
+          <input type="text" id="longitud" name="longitud">
+        </div>
+      </div>
+
+      <label for="direccion">Dirección del incidente</label>
+      <input type="text" name="direccion" id="direccion" placeholder="Ej. Calle 123, Colonia, Ciudad">
+
+      <label for="fecha_hora">* Fecha y Hora del Incidente</label>
+      <input type="datetime-local" name="fecha_hora" id="fecha_hora" required>
+
+      <label for="placa_vehiculo">Placa del Vehículo</label>
+      <input type="text" name="placa_vehiculo" id="placa_vehiculo" placeholder="Ej. ABC-123" disabled>
+
+      <label for="descripcion">* Descripción del Incidente</label>
+      <textarea name="descripcion" id="descripcion" rows="5" required placeholder="Describa detalladamente lo ocurrido..."></textarea>
+
+      <label for="evidencias">Evidencias (imágenes)</label>
+      <input type="file" name="evidencias" id="evidencias" multiple accept=".jpg,.jpeg,.png,.mp4,.pdf">
+
+      <button type="submit">📤 Enviar Denuncia</button>
+    </form>
+
+    <div class="alerta">
+      <strong>¡Importante!</strong> Esta denuncia será registrada con tus datos. En caso de emergencia, llama directamente al <strong>911</strong>.
+    </div>
+  </div>
+
+</body>
+</html>

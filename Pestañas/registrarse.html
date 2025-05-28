@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Usuario</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+    }
+
+    header nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 40px auto;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 30px;
+    }
+
+    h2 {
+      margin-top: 0;
+      background-color: #007bff;
+      color: white;
+      padding: 12px;
+      border-radius: 10px 10px 0 0;
+      font-size: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .checkbox {
+      margin-top: 15px;
+    }
+
+    .checkbox input {
+      margin-right: 10px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+
+    .limpiar {
+      background-color: #f8f9fa;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+      color: black;
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .footer-text a {
+      text-decoration: none;
+      color: #007bff;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div><strong>🚦 Denuncias Viales</strong></div>
+    <nav>
+      <a href="index.html">Inicio</a>
+      <a href="formulario_anonimo.html">Denunciar</a>
+      <a href="login.html">Consultar</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>👤 Registro de Usuario</h2>
+    <p>Complete el siguiente formulario para crear una cuenta. Los campos marcados con * son obligatorios.</p>
+
+    <form action="/api/registro" method="post">
+      <label>* Nombre(s)</label>
+      <input type="text" name="nombre" required>
+
+      <label>* Apellido(s)</label>
+      <input type="text" name="apellidos" required>
+
+      <label>* Correo Electrónico</label>
+      <input type="email" name="correo" required>
+      <small>Este correo se utilizará para iniciar sesión y recibir notificaciones.</small>
+
+      <label>* Contraseña</label>
+      <input type="password" name="contrasena" required>
+
+      <label>* Confirmar Contraseña</label>
+      <input type="password" name="confirmar_contrasena" required>
+
+      <label>Teléfono</label>
+      <input type="text" name="telefono" pattern="[0-9]{10}" placeholder="10 dígitos sin espacios ni guiones.">
+
+      <label>CURP</label>
+      <input type="text" name="curp" placeholder="Opcional. Ayuda a validar tu identidad.">
+
+      <div class="checkbox">
+        <input type="checkbox" name="terminos" required>
+        * Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a>.
+      </div>
+
+      <button type="submit">📝 Crear Cuenta</button>
+      <button type="reset" class="limpiar">⏹️ Limpiar Formulario</button>
+
+      <div class="footer-text">
+        ¿Ya tiene una cuenta? <a href="login.html">Iniciar Sesión</a>
+      </div>
+    </form>
+  </div>
+
+</body>
+</html>
