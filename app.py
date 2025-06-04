@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify, render_template, redirect, session
 import sqlite3
 import os
 from datetime import datetime
+import requests
 
 app = Flask(__name__)
 DB_PATH = os.path.join(os.path.dirname(__file__), "denuncias.db")
@@ -183,6 +184,31 @@ def denuncia_digital():
                         (id_denuncia, nombre, "imagen"))
     conn.commit()
     conn.close()
+    # Enviar mensaje de WhatsApp
+    mensaje = (
+        f"📄 *Denuncia Registrada*\n\n"
+        f"🆔 Folio: {folio}\n"
+        f"📂 Categoría: {data.get('categoria')}\n"
+        f"📅 Fecha: {data.get('fecha_hora')}\n\n"
+        f"✅ Muchas gracias por su colaboración. Estaremos en comunicación con usted."
+    )
+
+    url_api = "https://api.wali.chat/v1/messages"
+    headers = {
+        "Content-Type": "application/json",
+        "Token": "d076d11b5867519589de94b1341c8773bd992e80319d5cc5c0c71fdc3e7bc6d0f85f1d9159530ca0"  # Reemplaza con tu token real
+    }
+    payload = {
+        "phone": f"+52{telefono}",  # Asegúrate de incluir el código de país
+        "message": mensaje
+    }
+
+    try:
+        response = requests.post(url_api, json=payload, headers=headers)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Error al enviar el mensaje de WhatsApp: {e}")
+
     return jsonify({"status": "ok"})
 
 
